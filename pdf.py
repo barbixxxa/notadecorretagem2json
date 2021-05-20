@@ -1,8 +1,18 @@
 import pdfplumber
 import requests
 import re
+import argparse
+
 requests.packages.urllib3.disable_warnings()
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
+
+parser = argparse.ArgumentParser()
+parser.add_argument("arquivo", help="Nome do arquivo PDF a ser convertido")
+parser.add_argument("--arqSenha", dest="arqSenha",
+                    help="Senha do arquivo PDF a ser convertido")
+#parser.add_argument("usuario", help="Usuário para autenticar no Organizze")
+#parser.add_argument("senha", help="Senha para autenticar no Organizze")
+args = parser.parse_args()
 
 url = 'https://app.organizze.com.br/zze_front/transactions'
 
@@ -57,7 +67,7 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
     print(response_dictionary)
 
 
-with pdfplumber.open("rico.pdf", password="XXX") as pdf:
+with pdfplumber.open(args.arquivo, password=args.arqSenha) as pdf:
     pagina = pdf.pages[0]
     pagina_texto = pagina.extract_text()
 
