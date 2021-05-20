@@ -2,6 +2,7 @@ import pdfplumber
 import requests
 import re
 import argparse
+import organizze
 
 requests.packages.urllib3.disable_warnings()
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
@@ -10,16 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("arquivo", help="Nome do arquivo PDF a ser convertido")
 parser.add_argument("--arqSenha", dest="arqSenha",
                     help="Senha do arquivo PDF a ser convertido")
-#parser.add_argument("usuario", help="Usuário para autenticar no Organizze")
-#parser.add_argument("senha", help="Senha para autenticar no Organizze")
 args = parser.parse_args()
-
-url = 'https://app.organizze.com.br/zze_front/transactions'
-
-headers = {"X-Auth-Token": "TOKEN",
-           "Current-Entity-Id": "ID", "Content-Type": "application/json;charset=UTF-8"}
-
-account_uuid = 'UUID'
 
 
 def addTransacao(data_transacao, ativos):
@@ -35,12 +27,13 @@ def addTransacao(data_transacao, ativos):
 
 def requisicaoTaxas(data_transacao, preco_ativo):
 
-    tag_uuid = 'UUID'
+    tag_uuid = organizze.tags[0]
 
-    data = '{\"transaction\": {\"amount\": '+preco_ativo+', \"activity_type\": 0, \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+account_uuid+'\", \"description\": \"TAXAS\", \"tag_uuid\": \"' + \
+    data = '{\"transaction\": {\"amount\": '+preco_ativo+', \"activity_type\": 0, \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid+'\", \"description\": \"TAXAS\", \"tag_uuid\": \"' + \
         tag_uuid + '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
 
-    response = requests.post(url, headers=headers, data=data, verify=False)
+    response = requests.post(
+        organizze.url, headers=organizze.headers, data=data, verify=False)
     response_dictionary = response.json()
     print(response_dictionary)
 
@@ -49,20 +42,21 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
 
     preco_transacao = str(float(qtd_ativo) * float(preco_ativo))
 
-    tag_uuid = 'UUID'
+    tag_uuid = organizze.tags[0]
 
     if activity_type == 'V':
         activity_type = '1'
-        tag_uuid = 'UUID'
+        tag_uuid = organizze.tags[1]
     else:
         activity_type = '0'
 
-    data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+account_uuid+'\", \"description\": \"' + \
+    data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid+'\", \"description\": \"' + \
         nome_ativo+' - '+qtd_ativo + \
         ' ['+preco_ativo+']\", \"tag_uuid\": \"'+tag_uuid + \
         '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
 
-    response = requests.post(url, headers=headers, data=data, verify=False)
+    response = requests.post(
+        organizze.url, headers=organizze.headers, data=data, verify=False)
     response_dictionary = response.json()
     print(response_dictionary)
 
