@@ -124,7 +124,7 @@ def main():
                     ativos.append(ativo)
 
             taxa = {"nome": "TAXAS", "valor": format(
-                valor_com_taxas - valor_sem_taxas, '.2f')}
+                abs(valor_com_taxas - valor_sem_taxas), '.2f')}
             ativos.append(taxa)
 
             addTransacao(data_transacao, ativos)
