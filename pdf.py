@@ -61,60 +61,75 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
     print(response_dictionary)
 
 
-with pdfplumber.open(args.arquivo, password=args.arqSenha) as pdf:
-    pagina = pdf.pages[0]
-    pagina_texto = pagina.extract_text()
+def main():
 
-    data_transacao = ''
-    valor_com_taxas = ''
-    valor_sem_taxas = ''
-    ativos = []
+    with pdfplumber.open(args.arquivo, password=args.arqSenha) as pdf:
 
-    for linha in pagina_texto.split("\n"):
+        for pagina in pdf.pages:
 
-        ativo = {}
+            pagina_texto = pagina.extract_text()
 
-        if linha.find('/') == 12:
-            match = re.search(r'\d{2}\/\d{2}\/\d{4}', linha)
-            datas = match.group().split("/")
-            data_transacao = "-".join(datas[::-1])
+            data_transacao = ''
+            valor_com_taxas = ''
+            valor_sem_taxas = ''
+            ativos = []
 
-        if linha.startswith("Líquido"):
-            match = re.search(r'\d*\.*\d+\,\d{2}', linha)
-            valor_com_taxas = float(
-                match.group().replace(".", "").replace(",", "."))
+            for linha in pagina_texto.split("\n"):
 
-        if linha.startswith("Vendas à vista"):
-            match = re.findall(r'\d*\.*\d+\,\d{2}', linha)
-            valor_sem_taxas = float(
-                match[1].replace(".", "").replace(",", "."))
+                ativo = {}
 
-        if linha.startswith("1-BOVESPA"):
-            linha_elementos = (linha.split())
+                if linha.find('/') == 12:
+                    match = re.search(r'\d{2}\/\d{2}\/\d{4}', linha)
+                    datas = match.group().split("/")
+                    data_transacao = "-".join(datas[::-1])
 
-            tipo_transacao = linha_elementos[1]
-            nome_ativo = linha_elementos[3]
+                if linha.startswith("Líquido"):
+                    match = re.search(r'\d*\.*\d+\,\d{2}', linha)
+                    valor_com_taxas = float(
+                        match.group().replace(".", "").replace(",", "."))
 
-            ativo["tipo"] = tipo_transacao
-            ativo["nome"] = nome_ativo
+                if linha.startswith("Vendas à vista"):
+                    match = re.findall(r'\d*\.*\d+\,\d{2}', linha)
+                    valor_sem_taxas = float(
+                        match[1].replace(".", "").replace(",", "."))
 
-            for i in range(6, len(linha_elementos)):
-                try:
-                    int(linha_elementos[i])
-                except:
-                    continue
+                if linha.startswith("1-BOVESPA"):
+                    linha_elementos = (linha.split())
 
-                qtd_ativo = linha_elementos[i]
-                preco_ativo = linha_elementos[i+1].replace(",", ".")
-                ativo["qtd"] = qtd_ativo
-                ativo["preco"] = preco_ativo
+                    # print(linha_elementos)
+                    #print(' --- '+str(len(linha_elementos)))
 
-        if (ativo.keys()):
-            ativos.append(ativo)
+                    tipo_transacao = linha_elementos[1]
 
-    taxa = {"nome": "TAXAS", "valor": format(
-        valor_com_taxas - valor_sem_taxas, '.2f')}
-    ativos.append(taxa)
+                    if (linha_elementos[3] == 'FII'):
+                        nome_ativo = linha_elementos[-6]
+                    else:
+                        nome_ativo = linha_elementos[3]
 
-    addTransacao(data_transacao, ativos)
-    #print(data_transacao, ativos)
+                    ativo["tipo"] = tipo_transacao
+                    ativo["nome"] = nome_ativo
+
+                    for i in range(6, len(linha_elementos)):
+                        try:
+                            int(linha_elementos[i])
+                        except:
+                            continue
+
+                        qtd_ativo = linha_elementos[i]
+                        preco_ativo = linha_elementos[i+1].replace(",", ".")
+                        ativo["qtd"] = qtd_ativo
+                        ativo["preco"] = preco_ativo
+
+                if (ativo.keys()):
+                    ativos.append(ativo)
+
+            taxa = {"nome": "TAXAS", "valor": format(
+                valor_com_taxas - valor_sem_taxas, '.2f')}
+            ativos.append(taxa)
+
+            addTransacao(data_transacao, ativos)
+            print(data_transacao, ativos)
+
+
+if __name__ == "__main__":
+    main()
