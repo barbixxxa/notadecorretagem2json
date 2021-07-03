@@ -1,2 +1,2 @@
-# notadecorretagem2json
-Converter algumas informações de uma notadecorretagem.pdf para JSON
+# Organizze
+Inserir dados de nota de corretagem na plataforma [organizze](http://organizze.com.br/)
