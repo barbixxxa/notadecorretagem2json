@@ -12,8 +12,10 @@ xAuthToken = 'ey...'
 
 account_uuid = 'UUID'
 
-tags = ['UUID',
-        'UUID']
+tags = {'despesa': 'UUID',
+        'receita': 'UUID'}
+
+activity_type = {'despesa': '0', 'receita': '1'}
 
 url = 'https://app.organizze.com.br/zze_front/transactions'
 
