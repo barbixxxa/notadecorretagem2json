@@ -1,5 +1,9 @@
 # Organizze
+
+[![python](https://img.shields.io/badge/python-3.8-blue)](https://github.com/shmilylty/OneForAll/tree/master/)
+
 Inserir dados de nota de corretagem na plataforma [organizze](http://organizze.com.br/)
+
 
 ## Dependências
 
