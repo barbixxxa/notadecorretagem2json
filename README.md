@@ -1,6 +1,6 @@
 # Organizze
 
-[![python](https://img.shields.io/badge/python-3.8-blue)](https://github.com/shmilylty/OneForAll/tree/master/)
+[![python](https://img.shields.io/badge/python-3.8-blue)](https://github.com/barbixxxa/organizze)
 
 Inserir dados de nota de corretagem na plataforma [organizze](http://organizze.com.br/)
 
