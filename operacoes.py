@@ -1,3 +1,4 @@
+#!/bin/python3
 import pdfplumber
 import requests
 import re
@@ -27,7 +28,7 @@ def addTransacao(data_transacao, ativos):
 
 def requisicaoTaxas(data_transacao, preco_ativo):
 
-    tag_uuid = organizze.tags[0]
+    tag_uuid = organizze.tags['despesa']
 
     data = '{\"transaction\": {\"amount\": '+preco_ativo+', \"activity_type\": 0, \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid+'\", \"description\": \"TAXAS\", \"tag_uuid\": \"' + \
         tag_uuid + '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
@@ -42,13 +43,13 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
 
     preco_transacao = str(float(qtd_ativo) * float(preco_ativo))
 
-    tag_uuid = organizze.tags[0]
+    tag_uuid = organizze.tags['despesa']
 
     if activity_type == 'V':
-        activity_type = '1'
-        tag_uuid = organizze.tags[1]
+        activity_type = organizze.activity_type['receita']
+        tag_uuid = organizze.tags['receita']
     else:
-        activity_type = '0'
+        activity_type = organizze.activity_type['despesa']
 
     data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid+'\", \"description\": \"' + \
         nome_ativo+' - '+qtd_ativo + \
