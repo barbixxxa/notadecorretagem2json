@@ -1,4 +1,5 @@
 '''
+Execute para não commitar as credenciais: git update-index --assume-unchanged organizze.py
 Variáveis contendo as informações para poder autenticar no Organizze
 
 X-Auth-Token: token de acesso após autenticação
