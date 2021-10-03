@@ -7,7 +7,7 @@ Inserir dados de nota de corretagem na plataforma [organizze](http://organizze.c
 
 ## Dependências
 
-1. [PDF Plumber](https://pypi.org/project/pdfplumber/) - `pip3 install pdfplumber`
+1. [PDF Plumber](https://pypi.org/project/pdfplumber/) - `pip3 install pdfplumber` or `pip3 install -r requirements.txt`
 
 ## Como executar
 ### Adicionar operações ao Organizze
