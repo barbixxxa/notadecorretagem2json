@@ -17,7 +17,6 @@ args = parser.parse_args()
 
 
 def addTransacao(ativos):
-
     for ativo in ativos:
         requisicao(ativo["data"], ativo["tipo"], ativo["nome"],
                    ativo["qtd"], ativo["preco"], ativo["corretagem"], ativo["total"], ativo["dolar"])
@@ -54,9 +53,6 @@ def main():
     with pdfplumber.open(args.arquivo, password=args.arqSenha) as pdf:
 
         for pagina in pdf.pages:
-
-            if pagina.page_number == 1:
-                continue
 
             pagina_texto = pagina.extract_text()
 

@@ -4,13 +4,12 @@
 
 Inserir dados de nota de corretagem na plataforma [organizze](http://organizze.com.br/)
 
-
 ## Dependências
 
 1. [PDF Plumber](https://pypi.org/project/pdfplumber/) - `pip3 install pdfplumber` or `pip3 install -r requirements.txt`
 
 ## Como executar
-### Adicionar operações ao Organizze
+### Adicionar operações BR ao Organizze
 
 1. Modifique o valor das variáveis presentes no arquivo organizze.py
 2. Execute o seguinte comando informando o nome do arquivo pdf e a senha (caso exista)
@@ -33,3 +32,17 @@ Quantidade (10):
 Valor por cota (11,03): 
 Data (31/12): 
 ```
+### Adicionar operações USA ao Organizze
+
+1. Modifique o valor das variáveis presentes no arquivo organizze.py
+2. Execute o seguinte comando informando o nome do arquivo pdf e a senha (caso exista)
+
+`./operacoes.py [-h] [--arqSenha ARQSENHA] arquivo`
+
+3. Insira a cotação do dólar em reais para os dias solicitados
+
+## Melhorias a serem feitas
+
+- Integrar em um só arquivo operações BR e USA
+- Consumir cotação do dólar via API
+- Permitir dividendos USA
