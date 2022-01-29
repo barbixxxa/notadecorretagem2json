@@ -35,7 +35,7 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
     else:
         activity_type = organizze.activity_type['despesa']
 
-    data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid+'\", \"description\": \"' + \
+    data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid['corretora_us']+'\", \"description\": \"' + \
         nome_ativo+' - '+qtd_ativo + \
         ' ['+preco_ativo+']'+' {'+dolar+'}'+'\", \"tag_uuid\": \"'+tag_uuid + \
         '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'

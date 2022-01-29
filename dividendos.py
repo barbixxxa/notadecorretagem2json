@@ -11,6 +11,7 @@ def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
     preco_transacao = str(float(unidades) * float(valor))
 
     activity_type = organizze.activity_type['receita']
+    account_uuid = organizze.account_uuid['corretora_br']
 
     if tipo == '0':
         tag_uuid = organizze.tags['receita_dividendosBr']
@@ -18,10 +19,11 @@ def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
         tag_uuid = organizze.tags['receita_jcp']
     elif tipo == '2':
         tag_uuid = organizze.tags['receita_dividendosUs']
+        account_uuid = organizze.account_uuid['corretora_us']
     else:
         return
 
-    data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid+'\", \"description\": \"' + \
+    data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+account_uuid+'\", \"description\": \"' + \
         nome_ativo+' - '+unidades + \
         ' ['+valor+']\", \"tag_uuid\": \"'+tag_uuid + \
         '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
