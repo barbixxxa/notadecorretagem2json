@@ -35,27 +35,30 @@ def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
     # print(data)
 
 
-def recebeDividendo():
-    tipo = input('Tipo (0 - Dividendos BR; 1 - JCP; 2 - Dividendos US): ')
-    nome_ativo = input('Nome do ativo (XXX11): ')
-    unidades = input('Quantidade (10): ')
-    unidades = unidades.replace(',', '.')
-    valor = input('Valor por cota (11,03): ')
-    valor = valor.replace(',', '.')
+def menuDividendo():
     data = input('Data (31/12): ')
     data = data + '/2022'
+    qtd_operacoes = input(
+        'Quantas operações deseja inserir para esta mesma data?: ')
+    for i in range(int(qtd_operacoes)):
+        tipo = input('Tipo (0 - Dividendos BR; 1 - JCP; 2 - Dividendos US): ')
+        nome_ativo = input('Nome do ativo (XXX11): ')
+        valor = input('Valor por cota (11,03): ')
+        valor = valor.replace(',', '.')
+        unidades = input('Quantidade (10): ')
+        unidades = unidades.replace(',', '.')
 
-    if (len(tipo) < 1 or len(nome_ativo) < 1 or len(unidades) < 1 or len(valor) < 1 or len(data) < 1):
-        print('\n--- Valor vazio! ---\n')
-        return
-    else:
-        addDividendo(tipo, nome_ativo.upper(), unidades, valor, data)
-        print('-----------------------------------')
+        if (len(tipo) < 1 or len(nome_ativo) < 1 or len(unidades) < 1 or len(valor) < 1 or len(data) < 1):
+            print('\n--- Valor vazio! ---\n')
+            return
+        else:
+            addDividendo(tipo, nome_ativo.upper(), unidades, valor, data)
+            print('-----------------------------------')
 
 
 def main():
     while True:
-        recebeDividendo()
+        menuDividendo()
 
 
 if __name__ == "__main__":
