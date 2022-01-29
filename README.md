@@ -41,11 +41,29 @@ Data (31/12):
 
 3. Insira a cotação do dólar em reais para os dias solicitados
 
+### Adicionar operações CRIPTO ao Organizze
+
+1. Modifique o valor das variáveis presentes no arquivo organizze.py
+2. Execute o arquivo cripto.py
+
+`./cripto.py`
+
+3. Insira as seguintes informações:
+
+```
+Tipo (0 - Compra; 1 - Venda):
+Nome do ativo (BTC):
+Quantidade (0,1234):
+Cotação (235140,96):
+Data (31/12):
+```
+
 ## Melhorias a serem feitas
 
 - [ ] Integrar em um só arquivo operações BR e USA
 - [ ] Consumir cotação do dólar via API
 - [ ] Permitir dividendos USA
+- [ ] Permitir Conversão de Ativos Cripto
 
 
 ## Bugs
