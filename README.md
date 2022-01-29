@@ -37,12 +37,17 @@ Data (31/12):
 1. Modifique o valor das variáveis presentes no arquivo organizze.py
 2. Execute o seguinte comando informando o nome do arquivo pdf e a senha (caso exista)
 
-`./operacoes.py [-h] [--arqSenha ARQSENHA] arquivo`
+`./stocks.py [-h] [--arqSenha ARQSENHA] arquivo`
 
 3. Insira a cotação do dólar em reais para os dias solicitados
 
 ## Melhorias a serem feitas
 
-- Integrar em um só arquivo operações BR e USA
-- Consumir cotação do dólar via API
-- Permitir dividendos USA
+- [ ] Integrar em um só arquivo operações BR e USA
+- [ ] Consumir cotação do dólar via API
+- [ ] Permitir dividendos USA
+
+
+## Bugs
+
+- [ ] Stocks não reconhece quantidades inteiras. Valores não decimais

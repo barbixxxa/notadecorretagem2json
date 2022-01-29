@@ -13,9 +13,11 @@ def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
     activity_type = organizze.activity_type['receita']
 
     if tipo == '0':
-        tag_uuid = organizze.tags['dividendos']
+        tag_uuid = organizze.tags['receita_dividendosBr']
     elif tipo == '1':
-        tag_uuid = organizze.tags['jcp']
+        tag_uuid = organizze.tags['receita_jcp']
+    elif tipo == '2':
+        tag_uuid = organizze.tags['receita_dividendosUs']
     else:
         return
 
@@ -32,14 +34,14 @@ def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
 
 
 def recebeDividendo():
-    tipo = input('Tipo (0 - Dividendo; 1 - JCP): ')
+    tipo = input('Tipo (0 - Dividendos BR; 1 - JCP; 2 - Dividendos US): ')
     nome_ativo = input('Nome do ativo (XXX11): ')
     unidades = input('Quantidade (10): ')
+    unidades = unidades.replace(',', '.')
     valor = input('Valor por cota (11,03): ')
-    if (',' in valor):
-        valor = valor.replace(',', '.')
+    valor = valor.replace(',', '.')
     data = input('Data (31/12): ')
-    data = data + '/2021'
+    data = data + '/2022'
 
     if (len(tipo) < 1 or len(nome_ativo) < 1 or len(unidades) < 1 or len(valor) < 1 or len(data) < 1):
         print('\n--- Valor vazio! ---\n')

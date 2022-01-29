@@ -27,11 +27,11 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
     preco_transacao = str(
         format(abs(((float(total_transacao)+float(taxa_corretagem))*float(dolar))), '.2f'))
 
-    tag_uuid = organizze.tags['despesa']
+    tag_uuid = organizze.tags['despesa_stocks']
 
     if activity_type == 'V' or activity_type == 'S':
         activity_type = organizze.activity_type['receita']
-        tag_uuid = organizze.tags['receita']
+        tag_uuid = organizze.tags['receita_stocks']
     else:
         activity_type = organizze.activity_type['despesa']
 

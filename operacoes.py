@@ -29,7 +29,7 @@ def addTransacao(data_transacao, ativos):
 
 def requisicaoTaxas(data_transacao, preco_ativo):
 
-    tag_uuid = organizze.tags['despesa']
+    tag_uuid = organizze.tags['despesa_impostoTaxas']
 
     data = '{\"transaction\": {\"amount\": '+preco_ativo+', \"activity_type\": 0, \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid+'\", \"description\": \"TAXAS\", \"tag_uuid\": \"' + \
         tag_uuid + '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
@@ -44,11 +44,11 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
 
     preco_transacao = str(float(qtd_ativo) * float(preco_ativo))
 
-    tag_uuid = organizze.tags['despesa']
+    tag_uuid = organizze.tags['despesa_acoesBR']
 
     if activity_type == 'V':
         activity_type = organizze.activity_type['receita']
-        tag_uuid = organizze.tags['receita']
+        tag_uuid = organizze.tags['receita_acoesBR']
     else:
         activity_type = organizze.activity_type['despesa']
 
