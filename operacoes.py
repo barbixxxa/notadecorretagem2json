@@ -80,10 +80,13 @@ def main():
 
                 ativo = {}
 
-                if linha.find('/') == 12:
+                if linha.find('/') == 13:
                     match = re.search(r'\d{2}\/\d{2}\/\d{4}', linha)
-                    datas = match.group().split("/")
-                    data_transacao = "-".join(datas[::-1])
+                    try:
+                        datas = match.group().split("/")
+                        data_transacao = "-".join(datas[::-1])
+                    except:
+                        continue
 
                 if linha.startswith("Líquido"):
                     match = re.search(r'\d*\.*\d+\,\d{2}', linha)
@@ -104,9 +107,14 @@ def main():
                     tipo_transacao = linha_elementos[1]
 
                     if (linha_elementos[3] == 'FII'):
-                        nome_ativo = linha_elementos[-6]
+                        nome_ativo = linha_elementos[4] + '_' + linha_elementos[5] + '_'+ linha_elementos[6]
+                    elif (linha_elementos[3] == 'TREND'):
+                        nome_ativo = linha_elementos[4]
                     else:
-                        nome_ativo = linha_elementos[3]
+                        if (len(linha_elementos) > 10):
+                            nome_ativo = linha_elementos[3] + '_' + linha_elementos[4]
+                        else:
+                            nome_ativo = linha_elementos[3]
 
                     ativo["tipo"] = tipo_transacao
                     ativo["nome"] = nome_ativo
