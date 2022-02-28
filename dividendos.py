@@ -1,4 +1,5 @@
 #!/bin/python3
+# Adicionar dividendos BR, U$ ou JCP ao Organizze
 
 import requests
 import organizze
@@ -8,7 +9,7 @@ requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
 
 
 def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
-    preco_transacao = str(float(unidades) * float(valor))
+    preco_unidade = str(round(float(valor)/float(unidades), 2))
 
     activity_type = organizze.activity_type['receita']
     account_uuid = organizze.account_uuid['corretora_br']
@@ -23,9 +24,9 @@ def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
     else:
         return
 
-    data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+account_uuid+'\", \"description\": \"' + \
+    data = '{\"transaction\": {\"amount\": '+str(valor)+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+account_uuid+'\", \"description\": \"' + \
         nome_ativo+' - '+unidades + \
-        ' ['+valor+']\", \"tag_uuid\": \"'+tag_uuid + \
+        ' ['+preco_unidade+']\", \"tag_uuid\": \"'+tag_uuid + \
         '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
 
     response = requests.post(
@@ -43,10 +44,10 @@ def menuDividendo():
     for i in range(int(qtd_operacoes)):
         tipo = input('Tipo (0 - Dividendos BR; 1 - JCP; 2 - Dividendos US): ')
         nome_ativo = input('Nome do ativo (XXX11): ')
-        valor = input('Valor por cota (11,03): ')
-        valor = valor.replace(',', '.')
         unidades = input('Quantidade (10): ')
         unidades = unidades.replace(',', '.')
+        valor = input('Valor Recebido (11,03): ')
+        valor = valor.replace(',', '.')
 
         if (len(tipo) < 1 or len(nome_ativo) < 1 or len(unidades) < 1 or len(valor) < 1 or len(data) < 1):
             print('\n--- Valor vazio! ---\n')

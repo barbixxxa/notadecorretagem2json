@@ -1,4 +1,5 @@
 #!/bin/python3
+# Adicionar operações CRIPTO ao Organizze
 
 import requests
 import organizze
@@ -8,6 +9,7 @@ requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
 
 
 def addCripto(tipo, nome_ativo, unidades, valor, data_transacao):
+    valor = str(round(float(valor), 2))
     preco_transacao = str(float(unidades) * float(valor))
 
     if tipo == '0':

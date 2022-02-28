@@ -1,4 +1,5 @@
 #!/bin/python3
+# Adicionar operações BR ao Organizze
 
 import pdfplumber
 import requests
@@ -107,12 +108,14 @@ def main():
                     tipo_transacao = linha_elementos[1]
 
                     if (linha_elementos[3] == 'FII'):
-                        nome_ativo = linha_elementos[4] + '_' + linha_elementos[5] + '_'+ linha_elementos[6]
+                        nome_ativo = linha_elementos[4] + '_' + \
+                            linha_elementos[5] + '_' + linha_elementos[6]
                     elif (linha_elementos[3] == 'TREND'):
                         nome_ativo = linha_elementos[4]
                     else:
                         if (len(linha_elementos) > 10):
-                            nome_ativo = linha_elementos[3] + '_' + linha_elementos[4]
+                            nome_ativo = linha_elementos[3] + \
+                                '_' + linha_elementos[4]
                         else:
                             nome_ativo = linha_elementos[3]
 
