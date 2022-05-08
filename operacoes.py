@@ -122,7 +122,7 @@ def main():
                     ativo["tipo"] = tipo_transacao
                     ativo["nome"] = nome_ativo
 
-                    for i in range(6, len(linha_elementos)):
+                    for i in range(5, len(linha_elementos)): # varre da 6 coluna em diante procurando pela quantidade
                         try:
                             int(linha_elementos[i])
                         except:
