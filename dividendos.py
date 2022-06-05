@@ -44,10 +44,16 @@ def menuDividendo():
     for i in range(int(qtd_operacoes)):
         tipo = input('Tipo (0 - Dividendos BR; 1 - JCP; 2 - Dividendos US): ')
         nome_ativo = input('Nome do ativo (XXX11): ')
-        unidades = input('Quantidade (10): ')
-        unidades = unidades.replace(',', '.')
         valor = input('Valor Recebido (11,03): ')
         valor = valor.replace(',', '.')
+        if tipo == '2':
+            unidades = '1'
+            impost_pago = input('Imposto Pago (1,11): ')
+            impost_pago = impost_pago.replace(',', '.')
+            valor = str(float(valor) - float(impost_pago))
+        else:
+            unidades = input('Quantidade (10): ')
+            unidades = unidades.replace(',', '.')
 
         if (len(tipo) < 1 or len(nome_ativo) < 1 or len(unidades) < 1 or len(valor) < 1 or len(data) < 1):
             print('\n--- Valor vazio! ---\n')
