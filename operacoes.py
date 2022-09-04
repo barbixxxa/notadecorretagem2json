@@ -72,8 +72,11 @@ def main():
 
             pagina_texto = pagina.extract_text()
 
+            # print(pagina_texto)
+
             data_transacao = ''
-            valor_com_taxas = ''
+            taxa_liquidacao = ''
+            taxa_emolumentos = ''
             valor_sem_taxas = ''
             ativos = []
 
@@ -81,29 +84,40 @@ def main():
 
                 ativo = {}
 
-                if linha.find('/') == 13:
+                # print(linha)
+
+                # procura pela linha com barra para pegar a data das transacoes
+                if linha.find('/') == 72:
+                    # print(linha)
                     match = re.search(r'\d{2}\/\d{2}\/\d{4}', linha)
                     try:
                         datas = match.group().split("/")
                         data_transacao = "-".join(datas[::-1])
+                        # print(data_transacao)
                     except:
                         continue
 
-                if linha.startswith("Líquido"):
-                    match = re.search(r'\d*\.*\d+\,\d{2}', linha)
-                    valor_com_taxas = float(
-                        match.group().replace(".", "").replace(",", "."))
-
-                if linha.startswith("Vendas à vista"):
+                # pegar o valor da taxa de liquidicao
+                if linha.startswith("Compras"):
+                    # print(linha)
                     match = re.findall(r'\d*\.*\d+\,\d{2}', linha)
-                    valor_sem_taxas = float(
+                    taxa_liquidacao = float(
                         match[1].replace(".", "").replace(",", "."))
+                    # print(taxa_liquidacao)
 
-                if linha.startswith("1-BOVESPA"):
+                # pegar o valor da taxa de emolumento
+                if linha.startswith("EEssppeecciiffiiccaaççõõeess"):
+                    # print(linha)
+                    match = re.search(r'\d*\.*\d+\,\d{2}', linha)
+                    taxa_emolumentos = float(
+                        match.group().replace(".", "").replace(",", "."))
+                    # print(taxa_emolumentos)
+
+                if linha.startswith("BOVESPA"):  # pegar as operacoes
                     linha_elementos = (linha.split())
 
                     # print(linha_elementos)
-                    #print(' --- '+str(len(linha_elementos)))
+                    # print(' --- '+str(len(linha_elementos)))
 
                     tipo_transacao = linha_elementos[1]
 
@@ -122,7 +136,8 @@ def main():
                     ativo["tipo"] = tipo_transacao
                     ativo["nome"] = nome_ativo
 
-                    for i in range(5, len(linha_elementos)): # varre da 6 coluna em diante procurando pela quantidade
+                    # varre da 6 coluna em diante procurando pela quantidade
+                    for i in range(5, len(linha_elementos)):
                         try:
                             int(linha_elementos[i])
                         except:
@@ -137,7 +152,7 @@ def main():
                     ativos.append(ativo)
 
             taxa = {"nome": "TAXAS", "valor": format(
-                abs(valor_com_taxas - valor_sem_taxas), '.2f')}
+                abs(taxa_liquidacao + taxa_emolumentos), '.2f')}
             ativos.append(taxa)
 
             addTransacao(data_transacao, ativos)
