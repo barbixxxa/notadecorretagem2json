@@ -84,17 +84,18 @@ def main():
 
                 ativo = {}
 
-                # print(linha)
+                #print(linha)
 
                 # procura pela linha com barra para pegar a data das transacoes
-                if linha.find('/') == 72:
-                    # print(linha)
+                if linha.find('/') >= 70:
+                    #print(linha)
                     match = re.search(r'\d{2}\/\d{2}\/\d{4}', linha)
                     try:
                         datas = match.group().split("/")
                         data_transacao = "-".join(datas[::-1])
-                        # print(data_transacao)
+                        #print(data_transacao)
                     except:
+                        print('Data não encontrada!')
                         continue
 
                 # pegar o valor da taxa de liquidicao
