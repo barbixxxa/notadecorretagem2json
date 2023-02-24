@@ -60,10 +60,14 @@ Data (31/12):
 
 ## Melhorias a serem feitas
 
-- [ ] Integrar em um só arquivo operações BR e USA
-- [ ] Consumir cotação do dólar via API
-- [ ] Permitir dividendos USA
-- [ ] Permitir Conversão de Ativos Cripto
+- [ ] Integrar em um só arquivo operações BR e USA --- `stocks.py` e `operacoes.py`
+- [ ] Consumir cotação do dólar via API --- `stocks.py`
+- [ ] Permitir dividendos USA --- `dividendos.py` (wtf?)
+- [ ] Permitir Conversão de Ativos Cripto --- `cripto.py`
+- [ ] Log
+- [ ] Subscrição de ativos via extrato csv --- `dividendos.py`
+- [ ] JCP --- `dividendos.py`
+- [ ] Extrato total via CSV
 
 
 ## Bugs
