@@ -19,7 +19,7 @@ def addCripto(tipo, nome_ativo, unidades, valor, data_transacao):
         tag_uuid = organizze.tags['receita_cripto']
         activity_type = organizze.activity_type['receita']
     else:
-        return
+        return #TODO tipo 2, tem que fazer compra e venda do ativo, seriam 2 requests
 
     data = '{\"transaction\": {\"amount\": '+preco_transacao+', \"activity_type\": '+activity_type+', \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid['corretora_cripto']+'\", \"description\": \"' + \
         nome_ativo+' - '+unidades + \
@@ -39,12 +39,27 @@ def menuCripto():
     qtd_operacoes = input(
         'Quantas operações deseja inserir para esta mesma data?: ')
     for i in range(int(qtd_operacoes)):
-        tipo = input('Tipo (0 - Compra; 1 - Venda): ')
-        nome_ativo = input('Nome do ativo (BTC): ')
-        valor = input('Cotação (235140,96): ')
-        valor = valor.replace(',', '.')
-        unidades = input('Quantidade (0,1234): ')
-        unidades = unidades.replace(',', '.')
+        tipo = input('Tipo (0 - Compra; 1 - Venda; 2 - Conversão): ')
+        if(tipo == '2'):
+            moeda_origem_qtd = input(
+                'Quantidade da moeda de Origem (0,1234): ')
+            moeda_origem_qtd = moeda_origem_qtd.replace(',', '.')
+            moeda_origem_cotacao = input(
+                'Cotação da moeda de Origem (235140,96): ')
+            moeda_origem_cotacao = moeda_origem_cotacao.replace(',', '.')
+            unidades = input('Quantidade da moeda de Destino (0,1234): ')
+            unidades = unidades.replace(',', '.')
+            nome_ativo = input('Nome do ativo de Destino (BTC): ')
+            valor = str(round(
+                ((float(moeda_origem_qtd)*float(moeda_origem_cotacao))/float(unidades)), 10))
+            valor = valor.replace(',', '.')
+
+        else:
+            nome_ativo = input('Nome do ativo (BTC): ')
+            valor = input('Cotação (235140,96): ')
+            valor = valor.replace(',', '.')
+            unidades = input('Quantidade (0,1234): ')
+            unidades = unidades.replace(',', '.')
 
         if (len(tipo) < 1 or len(nome_ativo) < 1 or len(unidades) < 1 or len(valor) < 1 or len(data) < 1):
             print('\n--- Valor vazio! ---\n')
