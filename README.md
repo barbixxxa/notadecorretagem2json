@@ -65,9 +65,12 @@ Data (31/12):
 - [ ] Permitir dividendos USA --- `dividendos.py` (wtf?)
 - [ ] Permitir Conversão de Ativos Cripto --- `cripto.py`
 - [ ] Log
-- [ ] Subscrição de ativos via extrato csv --- `dividendos.py`
-- [ ] JCP --- `dividendos.py`
-- [ ] Extrato total via CSV
+- [ ] Extrato total via CSV --- `extrato.py`
+
+## Melhorias a feitas
+
+- [x] Subscrição e retratação de ativos via extrato csv --- `extrato.py`
+- [x] JCP --- `extrato.py`
 
 
 ## Bugs
