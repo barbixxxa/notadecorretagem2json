@@ -14,8 +14,6 @@ requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("arquivo", help="Nome do arquivo a ser lido")
-parser.add_argument('--csv', dest='csv', action='store_true',
-                    help='Indica se o arquivo é CSV')
 parser.add_argument('--html', dest='html', action='store_true',
                     help='Indica se o arquivo é HTML')
 parser.add_argument('--test', dest='test', action='store_true',
@@ -78,27 +76,6 @@ def pegarTipoUnidadeseNome(linha):
     return retorno
 
 
-def lerCSV():
-    with open(args.arquivo, newline='', encoding='latin-1') as arquivo_CSV:
-        leitor = csv.reader(arquivo_CSV, delimiter=';')
-        for linha in leitor:
-            if(len(linha) >= 4):
-                # print(linha)
-                if linha[2].find('Rendimento') == 0:
-                    data = pegarData(linha[0], 2)
-                    retorno = pegarTipoUnidadeseNome(linha[2])
-                    tipo = str(retorno["tipo"])
-                    unidades = retorno["unidades"]
-                    nome_ativo = retorno["nome_ativo"]
-                    valor = float(linha[3].replace(',', '.'))
-                    addDividendo(tipo, nome_ativo.upper(),
-                                 unidades, valor, data)
-                elif linha[2].find('Subscricao') == 0:  # TODO subscricao com extrato de 02dez2022
-                    print(linha)
-
-                #elif JCP
-
-
 def lerHTML():
     with open(args.arquivo, 'r') as arquivo_HTML:
         html = arquivo_HTML.read()
@@ -139,7 +116,7 @@ def lerHTML():
                          unidades, valor, data_transacao)
 
 
-def menuDividendo():  # TODO para casos em que eh JCP
+def menuDividendo():
     data = input('Data (31/12): ')
     data = data + '/2022'
     qtd_operacoes = input(
@@ -167,11 +144,9 @@ def menuDividendo():  # TODO para casos em que eh JCP
 
 
 def main():
-    if (args.csv):
-        lerCSV()
-    elif (args.html):
+    if (args.html):
         lerHTML()
-    else:  # TODO para casos em que eh JCP
+    else:
         menuDividendo()
 
 
