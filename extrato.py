@@ -51,7 +51,25 @@ def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao):
         print(data)
     else:
         response = requests.post(
-            organizze.url, headers=organizze.headers, data=data, verify=False)
+            organizze.url['transacoes'], headers=organizze.headers, data=data, verify=False)
+        response_dictionary = response.json()
+        print(response_dictionary)
+
+
+def addTransferencia(conta_debito, conta_credito, valor, data_transferencia):
+
+    activity_type = organizze.activity_type['receita']
+    category = organizze.category_uuid['transferencia']
+
+    data = '{\"transference\":{\"amount\":'+str(valor)+',\"times\":2,\"activityType\":'+activity_type+',\"description\":\"Transferencia\",\"date\":\"'+data_transferencia+'\",\"finite_periodicity\":\"monthly\",\"infinite_periodicity\":\"monthly\",\"category_uuid\":\"' + \
+        category+'\",\"attachments_attributes\":{},\"credit_account_uuid\":\"'+conta_credito+'\",\"debit_account_uuid\":\"' + \
+        conta_debito+'\",\"joined_tags\":\"\",\"finite\":false,\"infinite\":false},\"installmentValue\":\"R$ 0,00\"}'
+
+    if(args.test):
+        print(data)
+    else:
+        response = requests.post(
+            organizze.url['transferencias'], headers=organizze.headers, data=data, verify=False)
         response_dictionary = response.json()
         print(response_dictionary)
 
@@ -79,6 +97,17 @@ def pegarUnidadeseNome(linha):
     retorno["unidades"] = linha[index+1].replace(',', '.')
     retorno["nome_ativo"] = linha[index+2]
     return retorno
+
+
+def verificaConta(linha):
+    if (linha[2] == '260'):
+        conta = organizze.account_uuid['nuconta']
+    elif (linha[2] == '341'):
+        conta = organizze.account_uuid['iti']
+    else:
+        print('Conta Inválido!')
+
+    return conta
 
 
 def main():
@@ -137,6 +166,24 @@ def main():
                     valor = float(linha[3].replace('.', '').replace(',', '.'))
                     addTransacao(tipo, nome_ativo.upper(),
                                  unidades, valor, data)
+
+                elif linha[2].find('TED') == 0:
+                    # print(linha)
+                    data = pegarData(linha[0], 2)
+                    codigo = linha[5]
+                    linha_conta = linha[2].split(' ')
+                    valor = abs(
+                        float(linha[3].replace('.', '').replace(',', '.')))
+                    if (codigo == '26'):  # credito
+                        conta_credito = verificaConta(linha_conta)
+                        conta_debito = organizze.account_uuid['corretora_br']
+                    elif (codigo == '24'):  # retirada
+                        conta_debito = verificaConta(linha_conta)
+                        conta_credito = organizze.account_uuid['corretora_br']
+                    else:
+                        print('Código Inválido!')
+
+                    addTransferencia(conta_debito, conta_credito, valor, data)
 
 
 if __name__ == "__main__":
