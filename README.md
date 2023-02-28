@@ -67,7 +67,7 @@ Data (31/12):
 - [ ] Log
 
 
-## Melhorias a feitas
+## Melhorias feitas
 
 - [x] Subscrição e retratação de ativos via extrato csv --- `extrato.py`
 - [x] JCP --- `extrato.py`
