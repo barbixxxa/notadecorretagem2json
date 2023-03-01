@@ -14,6 +14,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("arquivo", help="Nome do arquivo PDF a ser convertido")
 parser.add_argument("--arqSenha", dest="arqSenha",
                     help="Senha do arquivo PDF a ser convertido")
+parser.add_argument('--test', dest='test', action='store_true',
+                    help='Apenas para teste, não realiza requisições')
+
 args = parser.parse_args()
 
 
@@ -35,10 +38,13 @@ def requisicaoTaxas(data_transacao, preco_ativo):
     data = '{\"transaction\": {\"amount\": '+preco_ativo+', \"activity_type\": 0, \"done\": 1, \"times\": 2, \"date\": \"'+data_transacao+'\", \"finite_periodicity\": \"monthly\", \"infinite_periodicity\": \"monthly\", \"attachments_attributes\": {}, \"account_uuid\": \"'+organizze.account_uuid['corretora_br']+'\", \"description\": \"TAXAS\", \"tag_uuid\": \"' + \
         tag_uuid + '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
 
-    response = requests.post(
-        organizze.url, headers=organizze.headers, data=data, verify=False)
-    response_dictionary = response.json()
-    print(response_dictionary)
+    if(args.test):
+        print(data)
+    else:
+        response = requests.post(
+            organizze.url['transacoes'], headers=organizze.headers, data=data, verify=False)
+        response_dictionary = response.json()
+        print(response_dictionary)
 
 
 def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo,):
@@ -58,10 +64,13 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
         ' ['+preco_ativo+']\", \"tag_uuid\": \"'+tag_uuid + \
         '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
 
-    response = requests.post(
-        organizze.url, headers=organizze.headers, data=data, verify=False)
-    response_dictionary = response.json()
-    print(response_dictionary)
+    if(args.test):
+        print(data)
+    else:
+        response = requests.post(
+            organizze.url['transacoes'], headers=organizze.headers, data=data, verify=False)
+        response_dictionary = response.json()
+        print(response_dictionary)
 
 
 def main():
@@ -84,16 +93,16 @@ def main():
 
                 ativo = {}
 
-                #print(linha)
+                # print(linha)
 
                 # procura pela linha com barra para pegar a data das transacoes
                 if linha.find('/') >= 70:
-                    #print(linha)
+                    # print(linha)
                     match = re.search(r'\d{2}\/\d{2}\/\d{4}', linha)
                     try:
                         datas = match.group().split("/")
                         data_transacao = "-".join(datas[::-1])
-                        #print(data_transacao)
+                        # print(data_transacao)
                     except:
                         print('Data não encontrada!')
                         continue

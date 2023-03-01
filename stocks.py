@@ -13,6 +13,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("arquivo", help="Nome do arquivo PDF a ser convertido")
 parser.add_argument("--arqSenha", dest="arqSenha",
                     help="Senha do arquivo PDF a ser convertido")
+parser.add_argument('--test', dest='test', action='store_true',
+                    help='Apenas para teste, não realiza requisições')
 args = parser.parse_args()
 
 
@@ -40,12 +42,13 @@ def requisicao(data_transacao, activity_type, nome_ativo, qtd_ativo, preco_ativo
         ' ['+preco_ativo+']'+' {'+dolar+'}'+'\", \"tag_uuid\": \"'+tag_uuid + \
         '\", \"observation\": \"\", \"joined_tags\": \"\", \"finite\": false, \"infinite\": false}, \"installmentValue\": \"R$ 0, 61\", \"isCreditCardSelected\": false}'
 
-    print(data)
-
-    response = requests.post(
-        organizze.url, headers=organizze.headers, data=data, verify=False)
-    response_dictionary = response.json()
-    print(response_dictionary)
+    if(args.test):
+        print(data)
+    else:
+        response = requests.post(
+            organizze.url['transacoes'], headers=organizze.headers, data=data, verify=False)
+        response_dictionary = response.json()
+        print(response_dictionary)
 
 
 def main():
