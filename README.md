@@ -65,6 +65,7 @@ Data (31/12):
 - [ ] Permitir dividendos USA --- `dividendos.py` (wtf?)
 - [ ] Permitir Conversão de Ativos Cripto --- `cripto.py`
 - [ ] Log
+- [ ] Tesouro Direto --- `extrato.py`
 
 
 ## Melhorias feitas
