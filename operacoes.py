@@ -161,9 +161,10 @@ def main():
                 if (ativo.keys()):
                     ativos.append(ativo)
 
-            taxa = {"nome": "TAXAS", "valor": format(
-                abs(taxa_liquidacao + taxa_emolumentos), '.2f')}
-            ativos.append(taxa)
+            if(taxa_liquidacao):
+                taxa = {"nome": "TAXAS", "valor": format(
+                    abs(taxa_liquidacao + taxa_emolumentos), '.2f')}
+                ativos.append(taxa)
 
             addTransacao(data_transacao, ativos)
             print(data_transacao, ativos)
