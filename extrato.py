@@ -38,6 +38,9 @@ def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao):
     elif tipo == '4':
         activity_type = organizze.activity_type['receita']
         tag_uuid = organizze.tags['receita_fii']
+    elif tipo == '5':
+        activity_type = organizze.activity_type['despesa']
+        tag_uuid = organizze.tags['despesa_tesouroDireto']
     else:
         print('Tipo inválido!')
         return
@@ -182,8 +185,17 @@ def main():
                         conta_credito = organizze.account_uuid['corretora_br']
                     else:
                         print('Código Inválido!')
-
                     addTransferencia(conta_debito, conta_credito, valor, data)
+
+                elif linha[2].find('Liquidacao Tesouro Direto') == 0:
+                    nome_ativo = 'Tesouro Direto'
+                    unidades = '1'
+                    data = pegarData(linha[0], 2)
+                    tipo = '5'
+                    valor = abs(
+                        float(linha[3].replace('.', '').replace(',', '.')))
+                    addTransacao(tipo, nome_ativo,
+                                 unidades, valor, data)
 
 
 if __name__ == "__main__":
