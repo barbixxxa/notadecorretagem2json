@@ -18,6 +18,19 @@ Inserir dados de nota de corretagem na plataforma [organizze](http://organizze.c
 
 ### Adicionar dividendos ou JCP ao Organizze
 
+#### Ler informações de arquivo HTML (apenas um trecho contendo apenas a tabela de dividendos)
+
+1. Modifique o valor das variáveis presentes no arquivo organizze.py
+2. Acesse os relatórios de informe de rendimentos da Avenue
+3. Selecione o mês desejado, copie o trecho de código HTML que contém a tabela de dividendos
+4. Salve os dados em um arquivo HTML
+5. Execute o arquivo dividendos.py passando o arquivo HTML recém criado
+
+`./dividendos.py --html ~/arquivo.html`
+
+
+#### Inserir dados manualmente via Menu
+
 1. Modifique o valor das variáveis presentes no arquivo organizze.py
 2. Execute o arquivo dividendos.py
 
