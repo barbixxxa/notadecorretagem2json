@@ -4,7 +4,6 @@
 
 import requests
 import organizze
-import csv
 import re
 import argparse
 from bs4 import BeautifulSoup
@@ -13,9 +12,8 @@ requests.packages.urllib3.disable_warnings()
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
 
 parser = argparse.ArgumentParser()
-parser.add_argument("arquivo", help="Nome do arquivo a ser lido")
 parser.add_argument('--html', dest='html', action='store_true',
-                    help='Indica se o arquivo é HTML')
+                    help='Nome do arquivo HTML a ser lido')
 parser.add_argument('--test', dest='test', action='store_true',
                     help='Apenas para teste, não realiza requisições')
 args = parser.parse_args()
@@ -48,7 +46,7 @@ def addDividendo(tipo, nome_ativo, unidades, valor, data_transacao):
         print(data)
     else:
         response = requests.post(
-            organizze.url, headers=organizze.headers, data=data, verify=False)
+            organizze.url['transacoes'], headers=organizze.headers, data=data, verify=False)
         response_dictionary = response.json()
         print(response_dictionary)
 
@@ -77,7 +75,7 @@ def pegarTipoUnidadeseNome(linha):
 
 
 def lerHTML():
-    with open(args.arquivo, 'r') as arquivo_HTML:
+    with open(args.html, 'r') as arquivo_HTML:
         html = arquivo_HTML.read()
 
         soup = BeautifulSoup(html, 'html.parser')
@@ -118,7 +116,7 @@ def lerHTML():
 
 def menuDividendo():
     data = input('Data (31/12): ')
-    data = data + '/2022'
+    data = data + '/2023'
     qtd_operacoes = input(
         'Quantas operações deseja inserir para esta mesma data?: ')
     for i in range(int(qtd_operacoes)):
