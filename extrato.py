@@ -12,16 +12,24 @@ requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("arquivo", help="Nome do arquivo a ser lido")
+parser.add_argument('--nu', dest='nu', action='store_true',
+                    help='Extrato da Nu')
+parser.add_argument('--xp', dest='xp', action='store_true',
+                    help='Extrato da XP')
 parser.add_argument('--test', dest='test', action='store_true',
                     help='Apenas para teste, não realiza requisições')
 args = parser.parse_args()
 
-
-def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao):
+def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao, corretora):
 
     preco_unidade = str(round(float(valor)/float(unidades), 2))
 
-    account_uuid = organizze.account_uuid['corretora_br']
+    if (corretora == 0):
+        account_uuid = organizze.account_uuid['corretora_br']
+    elif (corretora == 1):
+        account_uuid = organizze.account_uuid['xp']
+    else:
+        print('[ERROR] Transacao sem valor de corretora')
 
     if tipo == '0':
         activity_type = organizze.activity_type['receita']
@@ -61,29 +69,38 @@ def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao):
 
 def addTransferencia(conta_debito, conta_credito, valor, data_transferencia):
 
-    activity_type = organizze.activity_type['receita']
-    category = organizze.category_uuid['transferencia']
+    if (conta_debito != '' and conta_credito != '' and data_transferencia != ''):
 
-    data = '{\"transference\":{\"amount\":'+str(valor)+',\"times\":2,\"activityType\":'+activity_type+',\"description\":\"Transferencia\",\"date\":\"'+data_transferencia+'\",\"finite_periodicity\":\"monthly\",\"infinite_periodicity\":\"monthly\",\"category_uuid\":\"' + \
-        category+'\",\"attachments_attributes\":{},\"credit_account_uuid\":\"'+conta_credito+'\",\"debit_account_uuid\":\"' + \
-        conta_debito+'\",\"joined_tags\":\"\",\"finite\":false,\"infinite\":false},\"installmentValue\":\"R$ 0,00\"}'
+        activity_type = organizze.activity_type['receita']
+        category = organizze.category_uuid['transferencia']
 
-    if(args.test):
-        print(data)
+        data = '{\"transference\":{\"amount\":'+str(valor)+',\"times\":2,\"activityType\":'+activity_type+',\"description\":\"Transferencia\",\"date\":\"'+data_transferencia+'\",\"finite_periodicity\":\"monthly\",\"infinite_periodicity\":\"monthly\",\"category_uuid\":\"' + \
+            category+'\",\"attachments_attributes\":{},\"credit_account_uuid\":\"'+conta_credito+'\",\"debit_account_uuid\":\"' + \
+            conta_debito+'\",\"joined_tags\":\"\",\"finite\":false,\"infinite\":false},\"installmentValue\":\"R$ 0,00\"}'
+
+        if(args.test):
+            print(data)
+        else:
+            response = requests.post(
+                organizze.url['transferencias'], headers=organizze.headers, data=data, verify=False)
+            response_dictionary = response.json()
+            print(response_dictionary)
     else:
-        response = requests.post(
-            organizze.url['transferencias'], headers=organizze.headers, data=data, verify=False)
-        response_dictionary = response.json()
-        print(response_dictionary)
+        print('[ERROR] Add transferencia')
 
 
-def pegarData(linha, posicao):
+def pegarData(linha, posicao, formato):
     if linha.find('/') == posicao:
         # print(linha)
-        match = re.search(r'\d{2}\/\d{2}\/\d{4}', linha)
+        match = re.search(r'\d{1,2}\/\d{1,2}\/\d{4}', linha)
         try:
             datas = match.group().split("/")
-            data_transacao = "-".join(datas[::-1])
+            # print(datas)
+            if (formato == 0):  # D/M/A
+                data_transacao = "-".join(datas[::-1])
+            elif (formato == 1):  # M/D/A
+                data_transacao = "" + datas[2] + \
+                    "-" + datas[0] + "-" + datas[1]
             # print(data_transacao)
             return data_transacao
         except:
@@ -102,34 +119,99 @@ def pegarUnidadeseNome(linha):
     return retorno
 
 
-def verificaConta(linha):
-    if (linha[2] == '260'):
+def verificaConta(linha, posicao):
+    if (linha[posicao] == '260'):
         conta = organizze.account_uuid['nuconta']
-    elif (linha[2] == '341'):
+    elif (linha[posicao] == '341'):
         conta = organizze.account_uuid['iti']
     else:
+        conta = ''
         print('Conta Inválido!')
 
     return conta
 
 
 def main():
+    if args.nu:
+        extrato_nu()
+    elif args.xp:
+        extrato_xp()
+    else:
+        print('[ERROR] Falta o parametro da corretora')
+
+
+def extrato_xp():
+    with open(args.arquivo, newline='', encoding='latin-1') as arquivo_CSV:
+        leitor = csv.reader(arquivo_CSV, delimiter=',')
+        for linha in leitor:
+            if(len(linha) >= 4):
+                # print(linha)
+                if linha[3].upper().find('TAXA SEMESTRAL TESOURO DIRETO - CBLC') == 0:
+                    # print(linha)
+                    data = pegarData(linha[1], 1, 1)
+                    nome_ativo = 'TAXA SEMESTRAL TESOURO DIRETO - CBLC'
+                    unidades = '1'
+                    tipo = '5'
+                    valor = abs(
+                        float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
+
+                    addTransacao(tipo, nome_ativo.upper(),
+                                 unidades, valor, data, 1)
+
+                elif linha[3].upper().find('COMPRA TESOURO DIRETO CLIENTES') == 0:
+                    # print(linha)
+                    data = pegarData(linha[1], 1, 1)
+                    nome_ativo = 'COMPRA TESOURO DIRETO CLIENTES'
+                    unidades = '1'
+                    tipo = '5'
+                    valor = abs(
+                        float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
+
+                    addTransacao(tipo, nome_ativo.upper(),
+                                 unidades, valor, data, 1)
+
+                elif linha[3].upper().find('TED') == 0:
+                    conta_credito = conta_debito = ''
+                    # print(linha)
+                    data = pegarData(linha[1], 1, 1)
+                    lista_linha = linha[3].split(' ')
+                    #print(lista_linha)
+                    transacao = lista_linha[10].upper()
+                    valor = abs(
+                        float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
+
+                    if (transacao == 'RECEBIMENTO'):  # credito
+                        conta_credito = verificaConta(lista_linha, 2)
+                        conta_debito = organizze.account_uuid['xp']
+                    elif (transacao == 'RETIRADA'):  # retirada
+                        conta_debito = verificaConta(lista_linha, 2)
+                        conta_credito = organizze.account_uuid['xp']
+                    else:
+                        print('Transação Inválida!')
+                    try:
+                        addTransferencia(
+                            conta_debito, conta_credito, valor, data)
+                    except:
+                        print('[ERROR] Transferência')
+
+
+def extrato_nu():
     with open(args.arquivo, newline='', encoding='latin-1') as arquivo_CSV:
         leitor = csv.reader(arquivo_CSV, delimiter=';')
         for linha in leitor:
             if(len(linha) >= 4):
                 # print(linha)
-                if linha[2].find('Rendimento') == 0:
-                    data = pegarData(linha[0], 2)
+                if linha[2].upper().find('RENDIMENTO') == 0:
+                    data = pegarData(linha[0], 2, 0)
                     retorno = pegarUnidadeseNome(linha[2])
                     tipo = '0'
                     unidades = retorno["unidades"]
                     nome_ativo = retorno["nome_ativo"]
                     valor = float(linha[3].replace('.', '').replace(',', '.'))
                     addTransacao(tipo, nome_ativo.upper(),
-                                 unidades, valor, data)
+                                 unidades, valor, data, 0)
 
-                elif linha[2].find('Subscricao') == 0:
+                elif linha[2].upper().find('SUBSCRICAO') == 0:
                     # print(linha)
                     data = pegarData(linha[0], 2)
                     nome_ativo = 'Subscricao '
@@ -143,11 +225,11 @@ def main():
 
                     valor = float(linha[3].replace('.', '').replace(',', '.'))
                     addTransacao(tipo, nome_ativo.upper(),
-                                 unidades, valor, data)
+                                 unidades, valor, data, 0)
 
-                elif linha[2].find('RETRATACAO') == 0:
+                elif linha[2].upper().find('RETRATACAO') == 0:
                     # print(linha)
-                    data = pegarData(linha[0], 2)
+                    data = pegarData(linha[0], 2, 0)
                     nome_ativo = 'RETRATACAO '
                     retorno = pegarUnidadeseNome(linha[2])
                     unidades = retorno["unidades"]
@@ -155,11 +237,11 @@ def main():
                     tipo = '4'
                     valor = float(linha[3].replace('.', '').replace(',', '.'))
                     addTransacao(tipo, nome_ativo.upper(),
-                                 unidades, valor, data)
+                                 unidades, valor, data, 0)
 
-                elif linha[2].find('Juros de capital proprio') == 0:
+                elif linha[2].upper().find('JUROS DE CAPITAL PROPRIO') == 0:
                     print(linha)
-                    data = pegarData(linha[0], 2)
+                    data = pegarData(linha[0], 2, 0)
 
                     retorno = pegarUnidadeseNome(linha[2])
                     print(retorno)
@@ -168,34 +250,34 @@ def main():
                     nome_ativo = retorno["nome_ativo"]
                     valor = float(linha[3].replace('.', '').replace(',', '.'))
                     addTransacao(tipo, nome_ativo.upper(),
-                                 unidades, valor, data)
+                                 unidades, valor, data, 0)
 
-                elif linha[2].find('TED') == 0:
+                elif linha[2].upper().find('TED') == 0:
                     # print(linha)
-                    data = pegarData(linha[0], 2)
+                    data = pegarData(linha[0], 2, 0)
                     codigo = linha[5]
                     linha_conta = linha[2].split(' ')
                     valor = abs(
                         float(linha[3].replace('.', '').replace(',', '.')))
                     if (codigo == '26'):  # credito
-                        conta_credito = verificaConta(linha_conta)
+                        conta_credito = verificaConta(linha_conta, 2)
                         conta_debito = organizze.account_uuid['corretora_br']
                     elif (codigo == '24'):  # retirada
-                        conta_debito = verificaConta(linha_conta)
+                        conta_debito = verificaConta(linha_conta, 2)
                         conta_credito = organizze.account_uuid['corretora_br']
                     else:
                         print('Código Inválido!')
                     addTransferencia(conta_debito, conta_credito, valor, data)
 
-                elif linha[2].find('Liquidacao Tesouro Direto') == 0:
+                elif linha[2].upper().find('LIQUIDACAO TESOURO DIRETO') == 0:
                     nome_ativo = 'Tesouro Direto'
                     unidades = '1'
-                    data = pegarData(linha[0], 2)
+                    data = pegarData(linha[0], 2, 0)
                     tipo = '5'
                     valor = abs(
                         float(linha[3].replace('.', '').replace(',', '.')))
-                    addTransacao(tipo, nome_ativo,
-                                 unidades, valor, data)
+                    addTransacao(tipo, nome_ativo.upper(),
+                                 unidades, valor, data, 0)
 
 
 if __name__ == "__main__":
