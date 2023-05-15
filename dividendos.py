@@ -12,6 +12,7 @@ requests.packages.urllib3.disable_warnings()
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
 
 parser = argparse.ArgumentParser()
+parser.add_argument("arquivo", help="Nome do arquivo a ser lido")
 parser.add_argument('--html', dest='html', action='store_true',
                     help='Nome do arquivo HTML a ser lido')
 parser.add_argument('--test', dest='test', action='store_true',
@@ -75,7 +76,7 @@ def pegarTipoUnidadeseNome(linha):
 
 
 def lerHTML():
-    with open(args.html, 'r') as arquivo_HTML:
+    with open(args.arquivo, 'r') as arquivo_HTML:
         html = arquivo_HTML.read()
 
         soup = BeautifulSoup(html, 'html.parser')
