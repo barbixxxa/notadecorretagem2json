@@ -20,6 +20,7 @@ parser.add_argument('--test', dest='test', action='store_true',
                     help='Apenas para teste, não realiza requisições')
 args = parser.parse_args()
 
+
 def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao, corretora):
 
     preco_unidade = str(round(float(valor)/float(unidades), 2))
@@ -49,6 +50,15 @@ def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao, corretora):
     elif tipo == '5':
         activity_type = organizze.activity_type['despesa']
         tag_uuid = organizze.tags['despesa_tesouroDireto']
+    elif tipo == '6':
+        activity_type = organizze.activity_type['receita']
+        tag_uuid = organizze.tags['receita_tesouroDireto']
+    elif tipo == '7':
+        activity_type = organizze.activity_type['despesa']
+        tag_uuid = organizze.tags['despesa_impostoTaxas']
+    elif tipo == '8':
+        activity_type = organizze.activity_type['receita']
+        tag_uuid = organizze.tags['receita_rendaFixa']
     else:
         print('Tipo inválido!')
         return
@@ -64,7 +74,8 @@ def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao, corretora):
         response = requests.post(
             organizze.url['transacoes'], headers=organizze.headers, data=data, verify=False)
         response_dictionary = response.json()
-        print(response_dictionary)
+        # print(response_dictionary)
+        print('Add Status: ' + response.status_code)
 
 
 def addTransferencia(conta_debito, conta_credito, valor, data_transferencia):
@@ -84,7 +95,7 @@ def addTransferencia(conta_debito, conta_credito, valor, data_transferencia):
             response = requests.post(
                 organizze.url['transferencias'], headers=organizze.headers, data=data, verify=False)
             response_dictionary = response.json()
-            print(response_dictionary)
+            print('Add Status: ' + response.status_code)
     else:
         print('[ERROR] Add transferencia')
 
@@ -126,7 +137,7 @@ def verificaConta(linha, posicao):
         conta = organizze.account_uuid['iti']
     else:
         conta = ''
-        print('Conta Inválido!')
+        print('Conta Inválida!')
 
     return conta
 
@@ -161,9 +172,44 @@ def extrato_xp():
                 elif linha[3].upper().find('COMPRA TESOURO DIRETO CLIENTES') == 0:
                     # print(linha)
                     data = pegarData(linha[1], 1, 1)
-                    nome_ativo = 'COMPRA TESOURO DIRETO CLIENTES'
+                    nome_ativo = 'TESOURO DIRETO'
                     unidades = '1'
                     tipo = '5'
+                    valor = abs(
+                        float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
+
+                    addTransacao(tipo, nome_ativo.upper(),
+                                 unidades, valor, data, 1)
+
+                elif linha[3].upper().find('REPASSE DE JUROS TESOURO DIRETO') == 0:
+                    # print(linha)
+                    data = pegarData(linha[1], 1, 1)
+                    nome_ativo = 'REPASSE DE JUROS TESOURO DIRETO'
+                    unidades = '1'
+                    tipo = '6'
+                    valor = abs(
+                        float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
+
+                    addTransacao(tipo, nome_ativo.upper(),
+                                 unidades, valor, data, 1)
+
+                elif ((linha[3].upper().find('IRRF') == 0) or (linha[3].upper().find('IR - RESGATE') == 0)):
+                    # print(linha)
+                    data = pegarData(linha[1], 1, 1)
+                    nome_ativo = 'IRRF'
+                    unidades = '1'
+                    tipo = '7'
+                    valor = abs(
+                        float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
+
+                    addTransacao(tipo, nome_ativo.upper(),
+                                 unidades, valor, data, 1)
+                elif linha[3].upper().find('RESGATE') == 0:
+                    # print(linha)
+                    data = pegarData(linha[1], 1, 1)
+                    nome_ativo = 'RESGATE Renda Fixa'
+                    unidades = '1'
+                    tipo = '8'
                     valor = abs(
                         float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
 
@@ -175,7 +221,7 @@ def extrato_xp():
                     # print(linha)
                     data = pegarData(linha[1], 1, 1)
                     lista_linha = linha[3].split(' ')
-                    #print(lista_linha)
+                    # print(lista_linha)
                     transacao = lista_linha[10].upper()
                     valor = abs(
                         float(linha[5].split(' ')[1].replace('.', '').replace(',', '.')))
