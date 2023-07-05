@@ -75,7 +75,7 @@ def addTransacao(tipo, nome_ativo, unidades, valor, data_transacao, corretora):
             organizze.url['transacoes'], headers=organizze.headers, data=data, verify=False)
         response_dictionary = response.json()
         # print(response_dictionary)
-        print('Add Status: ' + response.status_code)
+        print('[ADD]Transação Status: ' + str(response.status_code))
 
 
 def addTransferencia(conta_debito, conta_credito, valor, data_transferencia):
@@ -95,9 +95,9 @@ def addTransferencia(conta_debito, conta_credito, valor, data_transferencia):
             response = requests.post(
                 organizze.url['transferencias'], headers=organizze.headers, data=data, verify=False)
             response_dictionary = response.json()
-            print('Add Status: ' + response.status_code)
+            print('[ADD]Transferência Status: ' + str(response.status_code))
     else:
-        print('[ERROR] Add transferencia')
+        print('[ERROR] ADD Transferência')
 
 
 def pegarData(linha, posicao, formato):
@@ -324,6 +324,9 @@ def extrato_nu():
                         float(linha[3].replace('.', '').replace(',', '.')))
                     addTransacao(tipo, nome_ativo.upper(),
                                  unidades, valor, data, 0)
+
+                else:
+                    print('[NOT FOUND] ' + str(linha[2].upper()))
 
 
 if __name__ == "__main__":
